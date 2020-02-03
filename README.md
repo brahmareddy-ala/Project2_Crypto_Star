@@ -1,5 +1,5 @@
 # Project2_Crypto_Star
-
+Install npm dependencies first...
 1. openzeppelin-solidity --> 2.4.0
 2. Truffle --> 5.1.10
 3. ERC-721 Token Name --> Udacity Crypto Star
