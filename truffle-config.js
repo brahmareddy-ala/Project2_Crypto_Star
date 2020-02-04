@@ -20,7 +20,7 @@
 
 const HDWalletProvider = require('truffle-hdwallet-provider');
 const infuraKey = "70d7f44c7e66409f95dedb7b870343b0";
-const mnemonic = "cycle oil chronic business awesome model patient alert throw host great soup";
+const mnemonic = "";
 
 module.exports = {
   /**
