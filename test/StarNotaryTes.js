@@ -8,20 +8,26 @@ contract('StarNotary', (accs) => {
     owner = accounts[0];
 });
 
-it('can add the star name and star symbol properly', async() => {
+it('can Create a Star', async() => {
     let tokenId = 1;
     let instance = await StarNotary.deployed();
-    await instance.createStar('Udacity Crypto Star', 'UCS', tokenId, {from: accounts[0]});
-    assert.equal(await instance.lookUptokenIdToStarInfo.call(tokenId), 'Udacity Crypto Star');
-    assert.equal((await instance.tokenIdToStarInfo.call(tokenId)).symbol, 'UCS');
+    await instance.createStar('Udacity Crypto Star', tokenId, {from: accounts[0]});
+    assert.equal(await instance.tokenIdToStarInfo.call(tokenId), 'Udacity Crypto Star')
+  });
+
+it('can add the star name and star symbol properly', async() => {
+    let instance = await StarNotary.deployed();
+    assert.equal(await instance.name.call(), 'Udacity Star Notary');
+    assert.equal(await instance.symbol.call(), 'USN');
 });
+
 
 it('lets user1 put up their star for sale', async() => {
     let instance = await StarNotary.deployed();
     let user1 = accounts[1];
     let starId = 2;
     let starPrice = web3.utils.toWei(".01", "ether");
-    await instance.createStar('Udacity Crypto Star', 'UCS', starId, {from: user1});
+    await instance.createStar('Udacity Crypto Star', starId, {from: user1});
     await instance.putStarUpForSale(starId, starPrice, {from: user1});
     assert.equal(await instance.starsForSale.call(starId), starPrice);
 });
@@ -33,7 +39,7 @@ it('lets user1 get the funds after the sale', async() => {
     let starId = 3;
     let starPrice = web3.utils.toWei(".01", "ether");
     let balance = web3.utils.toWei(".05", "ether");
-    await instance.createStar('Udacity Crypto Star', 'UCS', starId, {from: user1});
+    await instance.createStar('Udacity Crypto Star', starId, {from: user1});
     await instance.putStarUpForSale(starId, starPrice, {from: user1});
     let balanceOfUser1BeforeTransaction = await web3.eth.getBalance(user1);
     await instance.buyStar(starId, {from: user2, value: balance});
@@ -50,7 +56,7 @@ it('lets user2 buy a star, if it is put up for sale', async() => {
     let starId = 4;
     let starPrice = web3.utils.toWei(".01", "ether");
     let balance = web3.utils.toWei(".05", "ether");
-    await instance.createStar('Udacity Crypto Star', 'UCS', starId, {from: user1});
+    await instance.createStar('Udacity Crypto Star', starId, {from: user1});
     await instance.putStarUpForSale(starId, starPrice, {from: user1});
     let balanceOfUser1BeforeTransaction = await web3.eth.getBalance(user2);
     await instance.buyStar(starId, {from: user2, value: balance});
@@ -64,7 +70,7 @@ it('lets user2 buy a star and decreases its balance in ether', async() => {
     let starId = 5;
     let starPrice = web3.utils.toWei(".01", "ether");
     let balance = web3.utils.toWei(".05", "ether");
-    await instance.createStar('Udacity Crypto Star', 'UCS', starId, {from: user1});
+    await instance.createStar('Udacity Crypto Star', starId, {from: user1});
     await instance.putStarUpForSale(starId, starPrice, {from: user1});
     let balanceOfUser1BeforeTransaction = await web3.eth.getBalance(user2);
     const balanceOfUser2BeforeTransaction = await web3.eth.getBalance(user2);
@@ -79,9 +85,9 @@ it('lets 2 users exchange stars', async() => {
     let user1 = accounts[1];
     let user2 = accounts[2];
     let starId1 = 6, starId2 = 7;
-    await instance.createStar('Udacity Crypto Star', 'UCS', starId1, {from: user1});
-    await instance.createStar('Udacity Crypto Star', 'UCS', starId2, {from: user2});
-    await instance.exchangeStars(starId1, starId2);
+    await instance.createStar('Udacity Crypto Star', starId1, {from: user1});
+    await instance.createStar('Udacity Crypto Star', starId2, {from: user2});
+    await instance.exchangeStars(starId1, starId2, {from: user1});
     assert.equal(await instance.ownerOf.call(starId1), user2);
     assert.equal(await instance.ownerOf.call(starId2), user1);
 });
@@ -91,7 +97,7 @@ it('lets a user transfer a star', async() => {
     let user2 = accounts[2];
     let tokenId = 8;
     let instance = await StarNotary.deployed();
-    await instance.createStar('Udacity Crypto Star', 'UCS', tokenId, {from: user1});
+    await instance.createStar('Udacity Crypto Star', tokenId, {from: user1});
     assert.equal(await instance.lookUptokenIdToStarInfo.call(tokenId), 'Udacity Crypto Star');
     instance.transferStar(user2, tokenId,{from: user1});
     assert.equal(await instance.ownerOf(tokenId),user2);
