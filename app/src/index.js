@@ -34,9 +34,8 @@ const App = {
   createStar: async function() {
     const { createStar } = this.meta.methods;
     const name = document.getElementById("starName").value;
-    const symbol = document.getElementById("starSymbol").value;
     const id = document.getElementById("starId").value;
-    await createStar(name, symbol, id).send({from: this.account});
+    await createStar(name, id).send({from: this.account});
     App.setStatus("New Star Owner is " + this.account + ".");
   },
 
